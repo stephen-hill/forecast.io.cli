@@ -1,0 +1,6 @@
+{
+    "require": {
+        "tedivm/stash": "*",
+        "guzzlehttp/guzzle": "*"
+    }
+}
