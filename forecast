@@ -6,7 +6,20 @@ use Stash\Driver\FileSystem;
 use GuzzleHttp\Client;
 use Noodlehaus\Config;
 
-require('vendor/autoload.php');
+$autoloads = [
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php'
+];
+
+foreach ($autoloads as $file)
+{
+    if (file_exists($file))
+    {
+        require_once($file);
+        break;
+    }
+}
 
 $configPath = $_SERVER['HOME'] . '/.config/forecast.config.php';
 $config = new Config($configPath);
