@@ -8,7 +8,7 @@ use Noodlehaus\Config;
 
 require('vendor/autoload.php');
 
-$configPath = getcwd() . '/config.php';
+$configPath = $_SERVER['HOME'] . '/.config/forecast.config.php';
 $config = new Config($configPath);
 
 $url = sprintf(
