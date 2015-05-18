@@ -1,7 +1,19 @@
 {
+    "name": "stephenhill/forecast.io.cli",
+    "description": "A simple command line script that will generate a Base58 encoded password.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stephen Hill",
+            "email": "stephen@gatekiller.co.uk"
+        }
+    ],
     "require": {
         "tedivm/stash": "*",
         "guzzlehttp/guzzle": "*",
         "hassankhan/config": "*"
-    }
+    },
+    "bin": [
+        "forecast"
+    ]
 }
