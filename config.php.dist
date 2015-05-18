@@ -5,5 +5,5 @@ return [
     'latitude' => "0.0",
     'longitude' => "0.0",
     'ttl' => 120,
-    'units' => 'auto'   
+    'units' => 'auto'
 ];
