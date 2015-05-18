@@ -4,22 +4,26 @@
 use Stash\Pool;
 use Stash\Driver\FileSystem;
 use GuzzleHttp\Client;
+use Noodlehaus\Config;
 
 require('vendor/autoload.php');
 
-$config = require("config.php");
+$configPath = getcwd() . '/config.php';
+$config = new Config($configPath);
 
 $url = sprintf(
     'https://api.forecast.io/forecast/%s/%s,%s?units=%s',
-    $config['key'],
-    $config['latitude'],
-    $config['longitude'],
-    $config['units']
+    $config->get('key'),
+    $config->get('latitude'),
+    $config->get('longitude'),
+    $config->get('units')
 );
 
 // Create the cache pool
-$hash = hash('sha1', implode($config));
-$pool = new Pool(new FileSystem());
+$hash = hash_file('sha1', $configPath);
+$driver = new FileSystem();
+$driver->setOptions(['path' => sys_get_temp_dir()]);
+$pool = new Pool($driver);
 
 // Attempt cache retreaval
 $item = $pool->getItem($hash);
@@ -27,40 +31,19 @@ $json = $item->get();
 
 if ($item->isMiss() === true)
 {
-    echo 'Downloaded JSON' . PHP_EOL;
     $client = new Client();
     $response = $client->get($url);
     $json = $response->json();
-    $item->set($json, $config['ttl']);
-}
-else
-{
-    echo 'Loaded Cache' . PHP_EOL;
+    $item->set($json, $config->get('ttl'));
 }
 
-if ($argc === 2 && isset($argv[1]) === true)
-{
-    $argument = $argv[1];
-    if (isset($json->{$argument}) === true)
-    {
-        if (is_string($json->{$argument}) === true)
-        {
-            echo $json->{$argument} . PHP_EOL;
-            exit;
-        }
-    }
-}
+$jsonPath = sys_get_temp_dir() . '/' . $hash . '.json';
+file_put_contents($jsonPath, json_encode($json));
+$forecast = new Config($jsonPath);
 
-if ($argc === 3 && isset($argv[2]) === true)
+foreach ($argv as $k => $v)
 {
-    $argumentA = $argv[1];
-    $argumentB = $argv[2];
-    if (isset($json->{$argumentA}->{$argumentB}) === true)
-    {
-        if (is_string($json->{$argumentA}->{$argumentB}) === true)
-        {
-            echo $json->{$argumentA}->{$argumentB} . PHP_EOL;
-            exit;
-        }
-    }
+    if ($k === 0) { continue; }
+
+    echo $forecast->get($v, "Data for '{$v}' not found.") . PHP_EOL;
 }
