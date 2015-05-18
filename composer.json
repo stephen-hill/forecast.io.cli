@@ -1,6 +1,7 @@
 {
     "require": {
         "tedivm/stash": "*",
-        "guzzlehttp/guzzle": "*"
+        "guzzlehttp/guzzle": "*",
+        "hassankhan/config": "*"
     }
 }
